@@ -6,6 +6,8 @@ let width = window.innerWidth;
 let height = window.innerHeight;
 
 const camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
+camera.position.x = 2;
+camera.position.y = 2;
 camera.position.z = 3;
 
 // const axesHelper = new THREE.AxesHelper(3);
@@ -21,10 +23,12 @@ renderer.setSize(width, height);
 
 document.body.appendChild(renderer.domElement);
 
-const geometry = new THREE.BoxGeometry(1, 1, 1);
+// const geometry = new THREE.SphereGeometry(1, 8, 8);
+const geometry = new THREE.BoxGeometry(1, 1,  1);
 const material = new THREE.MeshBasicMaterial({ color: 'white', wireframe: true });
 const cube = new THREE.Mesh(geometry, material);
 scene.add(cube);
+
 
 // const floor = new THREE.Mesh(
 //   new THREE.PlaneGeometry(10, 10),
@@ -39,20 +43,21 @@ scene.add(cube);
 // scene.add(floor);
 
 let curX = 0;
-let curY = 0;
+let curZ = 0;
+const speed = 0.03;
 
 window.addEventListener('keydown', event => {
   if (event.code === 'KeyD') {
-    curX = 0.01;
+    curX = speed;
   }
   if (event.code === 'KeyA') {
-    curX = -0.01;
+    curX = -speed;
   }
   if (event.code === 'KeyW') {
-    curY = 0.01;
+    curZ = -speed;
   }
   if (event.code === 'KeyS') {
-    curY = -0.01;
+    curZ = speed;
   }
 });
 
@@ -61,17 +66,21 @@ window.addEventListener('keyup', event => {
     curX = 0;
   }
   if (['KeyW', 'KeyS'].includes(event.code)) {
-    curY = 0;
+    curZ = 0;
   }
 });
 
 const animate = () => {
+  camera.lookAt(cube.position)
+
   cube.position.x += curX;
-  cube.position.y += curY;
+  cube.position.z += curZ;
   renderer.render(scene, camera);
   // console.log(curX);
 };
 
+scene.add(new THREE.GridHelper(10, 10));
+scene.add(new THREE.AxesHelper(5));
 renderer.setAnimationLoop(animate);
 
 window.addEventListener('resize', () => {
